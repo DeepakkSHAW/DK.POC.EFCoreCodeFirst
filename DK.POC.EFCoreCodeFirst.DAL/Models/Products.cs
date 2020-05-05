@@ -14,5 +14,7 @@ namespace DK.POC.EFCoreCodeFirst.DAL.Models
         [StringLength(255)]
         public string Description { get; set; }
 
+        //Navigation properties
+        public Categories Categories { get; set; }
     }
 }

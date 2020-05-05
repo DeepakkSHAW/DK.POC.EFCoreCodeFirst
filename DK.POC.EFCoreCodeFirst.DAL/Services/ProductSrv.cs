@@ -1,4 +1,7 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using DK.POC.EFCoreCodeFirst.DAL.Models;
+using Microsoft.Data.SqlClient;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DK.POC.EFCoreCodeFirst.DAL.Services
 {
@@ -16,6 +19,31 @@ namespace DK.POC.EFCoreCodeFirst.DAL.Services
         public string GetName()
         {
             return "Testing done";
+        }
+
+        public async Task NewProductAsync(Products products)
+        {
+            await _ctx.Products.AddAsync(products);
+        }
+
+        public async Task<int> NewProductsAsync(List<Products> products)
+        {
+            int vResult = 0;
+            try
+            {
+                foreach (var product in products)
+                {
+                    await _ctx.AddAsync(product);
+                }
+                vResult = await _ctx.SaveChangesAsync();
+                return vResult;
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+
         }
     }
 }

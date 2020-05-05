@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using DK.POC.EFCoreCodeFirst.DAL.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -7,8 +8,8 @@ namespace DK.POC.EFCoreCodeFirst.DAL
     public class DataAccess : DbContext
     {
         private readonly SqlConnection _sqlConnection;
-        public DbSet<Models.Products> Products { get; set; }
-
+        public virtual DbSet<Models.Products> Products { get; set; }
+        public virtual DbSet<Models.Categories> Categories { get; set; }
         public DataAccess()
         {
         }
@@ -31,6 +32,23 @@ namespace DK.POC.EFCoreCodeFirst.DAL
                     optionsBuilder.UseSqlServer(_sqlConnection.ConnectionString);
                 }
             }
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Products>(entity =>
+            {
+                // Set key for entity, may not required since Data Model has key attribute
+                entity.HasKey(p => p.Id);
+            });
+
+            modelBuilder.Entity<Products>()
+                .HasOne(e => e.Categories)
+                .WithMany(c => c.Products);
+
+            modelBuilder.Entity<Categories>()
+               .HasMany(c => c.Products)
+               .WithOne(e => e.Categories);
+
         }
     }
 }
